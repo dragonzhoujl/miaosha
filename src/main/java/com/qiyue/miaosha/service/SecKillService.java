@@ -13,11 +13,13 @@ public interface SecKillService {
 	
 	List<SecKill> getSecKillList();
 	
-	Exposer exportSeckillUrl();
+	SecKill getById(long seckillId);
+	
+	Exposer exportSeckillUrl(long seckillId);
 	
 	SecKillExecution executeSeckill(long seckillId,long userPhone,String md5) throws SecKillCloseException,RepeatKillException,SecKillException;
 	
 	
-	
+	SecKillExecution executeSeckillByProcedure(long seckillId,long userPhone,String md5);
 
 }
