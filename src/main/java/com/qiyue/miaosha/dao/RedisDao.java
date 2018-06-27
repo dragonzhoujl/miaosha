@@ -3,6 +3,8 @@ package com.qiyue.miaosha.dao;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.dyuproject.protostuff.LinkedBuffer;
+import com.dyuproject.protostuff.ProtostuffIOUtil;
 import com.dyuproject.protostuff.runtime.RuntimeSchema;
 import com.qiyue.miaosha.pojo.SecKill;
 
@@ -26,11 +28,44 @@ public class RedisDao {
 		jedisPool=new JedisPool(ip,port);
 		try {
 			Jedis jedis=jedisPool.getResource();
+			try{
+				String key="seckill:"+seckillId;
+				  //由于redis内部没有实现序列化方法,而且jdk自带的implaments Serializable比较慢,会影响并发,因此需要使用第三方序列化方法.  
+				byte[] bytes=jedis.get(key.getBytes());
+				if(bytes!=null){
+					SecKill secKill=schema.newMessage();
+					ProtostuffIOUtil.mergeFrom(bytes, secKill, schema);
+					return secKill;
+				}
+			}finally{
+				jedisPool.close();
+			}
 		} catch (Exception e) {
-			
+			logger.error(e.getMessage(),e);
 		}
 		return null;
 				
+	}
+	
+	public String putSeckill(SecKill secKill){
+		jedisPool=new JedisPool(ip,port);
+		try{
+			Jedis jedis=jedisPool.getResource();
+			try{
+				String key="seckill:"+secKill.getSeckillId();
+				byte[] bytes=ProtostuffIOUtil.toByteArray(secKill, schema, LinkedBuffer.allocate(LinkedBuffer.DEFAULT_BUFFER_SIZE));
+				int timeout=60*60;
+				String result=jedis.setex(key.getBytes(), timeout, bytes);
+				return result;
+			}finally{
+				jedisPool.close();
+			}
+			
+		}catch(Exception e){
+			
+		}
+		return null;
+		
 	}
 
 }
