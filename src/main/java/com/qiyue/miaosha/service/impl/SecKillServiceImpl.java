@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.collections.MapUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,7 +32,7 @@ public class SecKillServiceImpl implements SecKillService{
 	@Autowired
 	private SecKillDao seckillDao;
 	@Autowired
-	private SuccessKillDao SuccessKillDao;
+	private SuccessKillDao successKillDao;
 	@Autowired
 	private RedisDao redisDao;
 	
@@ -51,9 +52,13 @@ public class SecKillServiceImpl implements SecKillService{
 		//优化点：缓存优化
 		SecKill secKill=redisDao.getSeckill(seckillId);
 		if(secKill==null) {
-			return new Exposer(false, seckillId);
-		}else {
-			redisDao.putSeckill(secKill);
+			secKill = seckillDao.queryById(seckillId); 
+			if(secKill==null){
+				return new Exposer(false, seckillId);
+			}else {
+				redisDao.putSeckill(secKill);
+			}
+			
 		}
 		Date startTime=secKill.getStartTime();
 		Date endTime=secKill.getEndTime();
@@ -75,7 +80,7 @@ public class SecKillServiceImpl implements SecKillService{
 		//执行秒杀逻辑：减库存，记录购买行为
 		Date nowTime=new Date();
 		try {
-			int insertCount=SuccessKillDao.insertSuccessKill(seckillId, userPhone);
+			int insertCount=successKillDao.insertSuccessKill(seckillId, userPhone);
 			if(insertCount<=0) {
 				throw new RepeatKillException("Seckill repeated");//重复秒杀
 			}else {
@@ -85,7 +90,7 @@ public class SecKillServiceImpl implements SecKillService{
 					throw new SecKillCloseException("Seckill is closed");
 				}else {
 					//秒杀成功
-					SuccessKill successKilled=SuccessKillDao.queryByIdWithSeckill(seckillId, userPhone);
+					SuccessKill successKilled=successKillDao.queryByIdWithSeckill(seckillId, userPhone);
 					return new SecKillExecution(seckillId, SeckillStatEnum.SUCCESS,successKilled);
 				}
 			}
@@ -114,11 +119,17 @@ public class SecKillServiceImpl implements SecKillService{
 		//执行存储过程，result被赋值
 		try {
 			seckillDao.seckillByProcedure(map);
-			//int result=
+			int result = MapUtils.getInteger(map, "result", -2);  
+			if(result==1){
+				SuccessKill successKilled=successKillDao.queryByIdWithSeckill(seckillId, userPhone);
+				return new SecKillExecution(seckillId, SeckillStatEnum.SUCCESS,successKilled);
+			}else{
+				return new SecKillExecution(seckillId, SeckillStatEnum.stateOf(result));
+			}
 		}catch(Exception e) {
-			
+			logger.error(e.getMessage());
+			return new SecKillExecution(seckillId, SeckillStatEnum.INNER_ERROR);
 		}
-		return null;
 		
 	}
 
