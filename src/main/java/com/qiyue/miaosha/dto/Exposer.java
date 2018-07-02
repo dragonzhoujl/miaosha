@@ -2,9 +2,9 @@ package com.qiyue.miaosha.dto;
 
 public class Exposer {
 	
-	private boolean exposed;// «∑Òø™∆Ù√Î…±
+	private boolean exposed;
 	
-	private String md5;//MD5º”√‹
+	private String md5;
 	
 	private long seckillId;
 	
