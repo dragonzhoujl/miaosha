@@ -4,6 +4,10 @@
                       http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd"
          version="3.1"
          metadata-complete="true">
+  <context-param>
+    <param-name>contextConfigLocation</param-name>
+    <param-value>classpath:spring-*.xml</param-value>
+  </context-param>
     <!--修改servlet版本为3.1-->
     
     <!-- 配置DispatcherServlet -->
@@ -15,10 +19,7 @@
         <!-- spring-dao.xml,spring-service.xml,spring-web.xl -->
         <!-- Mybatis->Spring->SpringMVC -->
 
-        <init-param>
-            <param-name>contextConfigLocation</param-name>
-            <param-value>classpath:spring/spring-*.xml</param-value>
-        </init-param>
+     
         
     </servlet>
     
@@ -27,5 +28,8 @@
         <!-- 默认匹配所有的请求 -->
         <url-pattern>/</url-pattern>
     </servlet-mapping>
+     <listener>
+    <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+  </listener>
     
 </web-app>

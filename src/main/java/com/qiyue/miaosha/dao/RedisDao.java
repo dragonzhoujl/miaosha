@@ -30,7 +30,6 @@ public class RedisDao {
 			Jedis jedis=jedisPool.getResource();
 			try{
 				String key="seckill:"+seckillId;
-				  //由于redis内部没有实现序列化方法,而且jdk自带的implaments Serializable比较慢,会影响并发,因此需要使用第三方序列化方法.  
 				byte[] bytes=jedis.get(key.getBytes());
 				if(bytes!=null){
 					SecKill secKill=schema.newMessage();

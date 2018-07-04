@@ -45,7 +45,7 @@
 	    <property name="sqlSessionFactoryBeanName" value="sqlSessionFactory"/>
 	</bean>
 	
-	<bean id="redisDao" class="com.qiyue.miaoshal.dao.RedisDao">
+	<bean id="redisDao" class="com.qiyue.miaosha.dao.RedisDao">
 		<constructor-arg index="0" value="10.0.5.117"></constructor-arg>
         <constructor-arg index="1" value="6379"></constructor-arg>
 	</bean> 
