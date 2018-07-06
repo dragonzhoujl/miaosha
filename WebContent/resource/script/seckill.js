@@ -6,13 +6,13 @@ var seckill = {
     //封装秒杀相关ajax的url
     URL: {
         now: function () {
-            return '/SecKill/seckill/time/now';
+            return '/miaosha/seckill/time/now';
         },
         exposer: function (seckillId) {
-            return '/SecKill/seckill/' + seckillId + '/exposer';
+            return '/miaosha/seckill/' + seckillId + '/exposer';
         },
         execution: function (seckillId, md5) {
-            return '/SecKill/seckill/' + seckillId + '/' + md5 + '/execution';
+            return '/miaosha/seckill/' + seckillId + '/' + md5 + '/execution';
         }
     },
 
@@ -29,10 +29,12 @@ var seckill = {
     detail: {
         //详情页初始化
         init: function (params) {
+      
             //手机验证和登录,计时交互
             //规划我们的交互流程
             //在cookie中查找手机号
             var killPhone = $.cookie('killPhone');
+          
             //验证手机号
             if (!seckill.validatePhone(killPhone)) {
                 //绑定手机 控制输出
@@ -48,9 +50,10 @@ var seckill = {
                     console.log("inputPhone: " + inputPhone);
                     if (seckill.validatePhone(inputPhone)) {
                         //电话写入cookie(7天过期)
-                        $.cookie('killPhone', inputPhone, {expires: 7, path: '/SecKill'});
+                        $.cookie('killPhone', inputPhone, {expires: 7, path: '/miaosha'});
                         //验证通过　　刷新页面
                         window.location.reload();
+                        
                     } else {
                         //todo 错误文案信息抽取到前端字典里
                         $('#killPhoneMessage').hide().html('<label class="label label-danger">手机号错误!</label>').show(300);
@@ -63,10 +66,11 @@ var seckill = {
             var startTime = params['startTime'];
             var endTime = params['endTime'];
             var seckillId = params['seckillId'];
+          
             $.get(seckill.URL.now(), {}, function (result) {
                 if (result && result['success']) {
                     var nowTime = result['data'];
-
+                    
                     //解决计时误差
                     var userNowTime = new Date().getTime();
                     console.log('nowTime:' + nowTime);
@@ -95,6 +99,7 @@ var seckill = {
         node.hide().html('<button class="btn btn-primary btn-lg" id="killBtn">开始秒杀</button>');
 
         $.post(seckill.URL.exposer(seckillId), {}, function (result) {
+        	
             //在回调函数种执行交互流程
             if (result && result['success']) {
                 var exposer = result['data'];

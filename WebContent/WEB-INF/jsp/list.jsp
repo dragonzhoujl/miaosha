@@ -35,12 +35,11 @@
 							</td>
 							<td><fmt:formatDate value="${sk.endTime }" pattern="yyyy-MM-dd HH:mm:ss"></fmt:formatDate>
 							</td>
-							<td><fmt:formatDate value="${sk.createTime }" pattern="yyyy-MM-dd HH:mm:ss"></fmt:formatDate>
+							<td><fmt:formatDate value="${sk.createdTime }" pattern="yyyy-MM-dd HH:mm:ss"></fmt:formatDate>
 							</td>
-							<td><fmt:formatDate value="${sk.createTime }" pattern="yyyy-MM-dd HH:mm:ss"></fmt:formatDate>
-							</td>
+						
 							<td>
-								<a class="btn btn-info" href="/Seckill/seckill/${sk.seckillId }/detail" target="_blank">link</a>
+								<a class="btn btn-info" href="/miaosha/seckill/${sk.seckillId }/detail" target="_blank">link</a>
 							</td>
 						</tr>
 					</c:forEach>

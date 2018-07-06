@@ -14,7 +14,7 @@
 		 where seckill_id =#{seckillId} 
 	</select>
 	<select id ="queryAll" resultType="SecKill">
-		select seckill_id,name,number,start_time,end_time,create_time from seckill 
+		select seckill_id,name,number,start_time,end_time,create_time createdtime from seckill 
 		order by create_time desc
 		limit #{offset},#{limit}  
 	</select>

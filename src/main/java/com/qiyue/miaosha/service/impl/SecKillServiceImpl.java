@@ -25,7 +25,7 @@ import com.qiyue.miaosha.exception.SecKillException;
 import com.qiyue.miaosha.pojo.SecKill;
 import com.qiyue.miaosha.pojo.SuccessKill;
 import com.qiyue.miaosha.service.SecKillService;
-@Service
+@Service("secKillService")
 public class SecKillServiceImpl implements SecKillService{
 	
 	private Logger logger=LoggerFactory.getLogger(this.getClass());
@@ -79,7 +79,7 @@ public class SecKillServiceImpl implements SecKillService{
 		try {
 			int insertCount=successKillDao.insertSuccessKill(seckillId, userPhone);
 			if(insertCount<=0) {
-				throw new RepeatKillException("Seckill repeated");//�ظ���ɱ
+				throw new RepeatKillException("Seckill repeated");
 			}else {
 				int updateCount=seckillDao.reduceNumber(seckillId, nowTime);
 				if(updateCount<=0) {

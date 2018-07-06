@@ -62,16 +62,19 @@ public class SecKillController {
 		}
 		return result;
 	}
+	@RequestMapping(value = "/{seckillId}/{md5}/execution",
+            method = RequestMethod.POST,
+            produces = {"application/json;charset=UTF-8"})
 	@ResponseBody  
     public SeckillResult<SecKillExecution> execute(@PathVariable("seckillId")Long seckillId,  
                                                    @PathVariable("md5")String md5,   
                                                    @CookieValue(value = "killPhone", required = false)Long phone){  
         if(phone == null){  
-            return new SeckillResult<>(false, "δע��");  
+            return new SeckillResult<>(false, "未注册");  
         }  
           
         try {  
-             SecKillExecution execution = secKillService.executeSeckillByProcedure(seckillId, phone, md5);  
+             SecKillExecution execution = secKillService.executeSeckill(seckillId, phone, md5);  
             return new SeckillResult<SecKillExecution>(true, execution);  
         } catch (SecKillCloseException e) {  
         	SecKillExecution execution = new SecKillExecution(seckillId, SeckillStatEnum.REPEAT_KILL);  
@@ -80,7 +83,8 @@ public class SecKillController {
         	SecKillExecution execution = new SecKillExecution(seckillId, SeckillStatEnum.END);  
             return new SeckillResult<SecKillExecution>(false, execution);  
         } catch (Exception e) {  
-            logger.error(e.getMessage(), e);  
+        //    logger.error(e.getMessage(), e);  
+        	System.out.println(e);
             SecKillExecution execution = new SecKillExecution(seckillId, SeckillStatEnum.INNER_ERROR);  
             return new SeckillResult<SecKillExecution>(false, execution);  
         }  
